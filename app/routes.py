@@ -1,7 +1,7 @@
 from app import app, db
 from flask import request, jsonify
 from app.models import Event
-
+from app.email import sendEmail
 
 
 # set index route to return nothing, just so no error occurs
@@ -14,30 +14,35 @@ def index():
 @app.route('/api/save', methods=['POST'])
 def save():
 
-    try:
+    # try:
 
-        title = request.headers.get('title')
-        day = request.headers.get('day')
-        month = request.headers.get('month')
-        year = request.headers.get('year')
-        notes = request.headers.get('notes')
+    title = request.headers.get('title')
+    day = request.headers.get('day')
+    month = request.headers.get('month')
+    year = request.headers.get('year')
+    notes = request.headers.get('notes')
+    email = request.headers.get('email')
 
-        #if any event is missing give back an error for a jsonify message
 
 
-        if not day or not title or not month or not year or not notes:
-            return jsonify({ 'error': 'Error #001: Invalid Parameters'})
+    #if any event is missing give back an error for a jsonify message
 
-        #all info is included, save the event
 
-        event = Event(title=title, day=day, month=month, year=year, notes=notes)
+    if not day or not title or not month or not year or not notes:
+        return jsonify({ 'error': 'Error #001: Invalid Parameters'})
 
-        db.session.add(event)
-        db.session.commit()
+    #all info is included, save the event
 
-        return jsonify({ 'success': 'Saved Event'})
-    except:
-        return jsonify({ 'error': 'Error #002: Could not save event'})
+    event = Event(title=title, day=day, month=month, year=year, notes=notes)
+
+    db.session.add(event)
+    db.session.commit()
+
+    sendEmail(title, day, month, year, notes, email)
+
+    return jsonify({ 'success': 'Saved Event'})
+    # except:
+    #     return jsonify({ 'error': 'Error #002: Could not save event'})
 
 @app.route('/api/retrieve', methods=['GET'])
 def retrieve():

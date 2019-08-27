@@ -1,0 +1,11 @@
+Dear {{ email }},
+
+This is an alert to let you know that you have an event booked on {{ month }}/{{ day }}/{{ year }}.
+
+Event Title: {{ title }}
+Event Notes: {{ notes }}
+
+If you did not create an event with us, please contact us immediately.
+
+Sincerely,
+EventScheduler.com
